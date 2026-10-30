@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../app/routes.dart';
 import '../../../app/theme.dart';
+import '../../../core/utils/validators.dart';
 import 'register_controller.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -154,16 +155,7 @@ class _RegisterViewState extends State<_RegisterView> {
                       labelText: 'Email',
                       prefixIcon: Icon(Icons.email_outlined),
                     ),
-                    validator: (value) {
-                      final email = value?.trim() ?? '';
-                      if (email.isEmpty) {
-                        return 'Email is required.';
-                      }
-                      if (!email.contains('@')) {
-                        return 'Enter a valid email.';
-                      }
-                      return null;
-                    },
+                    validator: AppValidators.email,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -173,16 +165,8 @@ class _RegisterViewState extends State<_RegisterView> {
                       labelText: 'Phone Number',
                       prefixIcon: Icon(Icons.phone_outlined),
                     ),
-                    validator: (value) {
-                      final phone = value?.trim() ?? '';
-                      if (phone.isEmpty) {
-                        return 'Phone is required.';
-                      }
-                      if (phone.length < 10) {
-                        return 'Enter a valid phone number.';
-                      }
-                      return null;
-                    },
+                    maxLength: 10,
+                    validator: AppValidators.phone,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -204,16 +188,11 @@ class _RegisterViewState extends State<_RegisterView> {
                         ),
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Password is required.';
-                      }
-                      if (value.length < 6) {
-                        return 'Password must contain at least 6 characters.';
-                      }
-                      return null;
-                    },
+                    validator: AppValidators.password,
+                    onChanged: (_) => setState(() {}),
                   ),
+                  const SizedBox(height: 8),
+                  const Text('Password requirements: at least 8 characters, uppercase, lowercase, number and special character.', style: TextStyle(fontSize: 12, color: Colors.grey)),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _confirmPasswordController,

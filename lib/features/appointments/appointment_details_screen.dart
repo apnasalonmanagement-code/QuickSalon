@@ -161,6 +161,20 @@ class _AppointmentDetailsScreenState
                 ],
               ),
 
+              if (_appointment.shopInstruction != null &&
+                  _appointment.shopInstruction!.trim().isNotEmpty &&
+                  (_appointment.status == 'pending' ||
+                      (( _appointment.status == 'held' || _appointment.status == 'confirmed') &&
+                          !_appointment.scheduledAt.isBefore(DateTime.now())))) ...[
+                const SizedBox(height: 16),
+                _Section(
+                  title: '📣 Message from Shop',
+                  children: [
+                    Text(_appointment.shopInstruction!.trim()),
+                  ],
+                ),
+              ],
+
               const SizedBox(
                 height:
                     16,

@@ -5,6 +5,7 @@ import '../appointments/my_appointments_screen.dart';
 import '../favorites/favorites_screen.dart';
 import '../home/home_screen.dart';
 import '../profile/profile_screen.dart';
+import '../notifications/notification_center_screen.dart';
 
 class UserShell extends StatefulWidget {
   const UserShell({super.key});
@@ -21,6 +22,7 @@ class _UserShellState extends State<UserShell> {
     const MyAppointmentsScreen(),
     const FavoritesScreen(),
     const ProfileScreen(),
+    const NotificationCenterScreen(managementMode: false),
   ];
 
   @override

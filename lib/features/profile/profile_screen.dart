@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../app/routes.dart';
 import '../../widgets/loading_widget.dart';
 import 'change_password_screen.dart';
+import 'delete_account_screen.dart';
 import 'edit_profile_screen.dart';
 import 'profile_controller.dart';
 
@@ -200,6 +201,13 @@ class _ProfileViewState extends State<_ProfileView> {
                   ),
                 ),
                 const SizedBox(height: 16),
+                Center(
+                  child: TextButton.icon(
+                    onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DeleteAccountScreen())),
+                    icon: const Icon(Icons.delete_forever, color: Colors.red),
+                    label: const Text('Delete Account', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                  ),
+                ),
                 Center(
                   child: TextButton.icon(
                     onPressed: () => _logout(controller),

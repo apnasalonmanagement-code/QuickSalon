@@ -14,6 +14,7 @@ class BookingReviewScreen extends StatelessWidget {
     required this.selectedServices,
     required this.selectedStaff,
     required this.selectedTime,
+    required this.onBack,
     required this.onBookingSuccess,
   });
 
@@ -22,6 +23,7 @@ class BookingReviewScreen extends StatelessWidget {
   final List<ServiceModel> selectedServices;
   final StaffModel selectedStaff;
   final String selectedTime;
+  final VoidCallback onBack;
   final VoidCallback onBookingSuccess;
 
   @override
@@ -34,14 +36,21 @@ class BookingReviewScreen extends StatelessWidget {
         selectedStaff: selectedStaff,
         selectedTime: selectedTime,
       ),
-      child: _BookingReviewView(onBookingSuccess: onBookingSuccess),
+      child: _BookingReviewView(
+        onBack: onBack,
+        onBookingSuccess: onBookingSuccess,
+      ),
     );
   }
 }
 
 class _BookingReviewView extends StatelessWidget {
-  const _BookingReviewView({required this.onBookingSuccess});
+  const _BookingReviewView({
+    required this.onBack,
+    required this.onBookingSuccess,
+  });
 
+  final VoidCallback onBack;
   final VoidCallback onBookingSuccess;
 
   Future<void> _confirm(
@@ -128,9 +137,12 @@ class _BookingReviewView extends StatelessWidget {
 
         return SafeArea(
           top: false,
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+          child: Column(
             children: [
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                  children: [
               _Section(
                 title: 'SHOP',
                 icon: Icons.store_outlined,
@@ -236,28 +248,64 @@ class _BookingReviewView extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: SizedBox(
-                  height: 56,
-                  child: FilledButton(
-                    onPressed: controller.isBooking
-                        ? null
-                        : () => _confirm(context, controller),
-                    child: controller.isBooking
-                        ? const SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                          )
-                        : Text(
-                            controller.requiresRequestApproval
-                                ? 'SUBMIT BOOKING REQUEST 🌸'
-                                : 'CONFIRM BOOKING 🌸',
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
+                  const SizedBox(height: 12),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border(
+                    top: BorderSide(color: Theme.of(context).dividerColor),
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 8,
+                      offset: const Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    OutlinedButton(
+                      onPressed: controller.isBooking ? null : onBack,
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(90, 52),
+                      ),
+                      child: const Text('Back'),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 52,
+                        child: FilledButton(
+                          onPressed: controller.isBooking
+                              ? null
+                              : () => _confirm(context, controller),
+                          child: controller.isBooking
+                              ? const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Text(
+                                  controller.requiresRequestApproval
+                                      ? 'SUBMIT BOOKING REQUEST 🌸'
+                                      : 'CONFIRM BOOKING 🌸',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

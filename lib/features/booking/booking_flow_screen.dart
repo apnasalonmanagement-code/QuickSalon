@@ -81,6 +81,20 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
     setState(() => _step--);
   }
 
+  bool _canNavigateToStep(int target) {
+    final controller = _controller;
+    if (target == 0) return true;
+    if (controller.selectedShop == null) return false;
+    if (target == 1) return true;
+    if (controller.selectedDate == null) return false;
+    if (target == 2) return true;
+    if (controller.selectedServices.isEmpty) return false;
+    if (target == 3) return true;
+    if (controller.selectedStaff == null) return false;
+    if (target == 4) return true;
+    return controller.selectedTime != null;
+  }
+
   void _showMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
@@ -132,13 +146,18 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
                           compact ? 12 : 20,
                           8,
                         ),
-                        child: _BookingProgress(step: _step),
+                        child: _BookingProgress(
+                          step: _step,
+                          canSelectStep: _canNavigateToStep,
+                          onStepSelected: (step) => setState(() => _step = step),
+                        ),
                       ),
                       Expanded(child: _buildStep()),
-                      _BookingSummary(
-                        controller: controller,
-                        compact: compact,
-                      ),
+                      if (_step != 5)
+                        _BookingSummary(
+                          controller: controller,
+                          compact: compact,
+                        ),
                       if (_step <= 3)
                         Padding(
                           padding: EdgeInsets.fromLTRB(
@@ -179,7 +198,7 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
                             ],
                           ),
                         ),
-                      if (_step >= 4)
+                      if (_step == 4)
                         Padding(
                           padding: EdgeInsets.fromLTRB(
                             compact ? 12 : 20,
@@ -245,6 +264,7 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
           selectedServices: _controller.selectedServices,
           selectedStaff: staff,
           selectedTime: time,
+          onBack: () => setState(() => _step = 4),
           onBookingSuccess: _handleBookingSuccess,
         );
       default:
@@ -254,8 +274,15 @@ class _BookingFlowScreenState extends State<BookingFlowScreen> {
 }
 
 class _BookingProgress extends StatelessWidget {
-  const _BookingProgress({required this.step});
+  const _BookingProgress({
+    required this.step,
+    required this.canSelectStep,
+    required this.onStepSelected,
+  });
+
   final int step;
+  final bool Function(int step) canSelectStep;
+  final ValueChanged<int> onStepSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -271,20 +298,23 @@ class _BookingProgress extends StatelessWidget {
         itemBuilder: (context, index) {
           final active = index == step;
           final complete = index < step;
+          final enabled = canSelectStep(index);
           return AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            child: Chip(
+            duration: const Duration(milliseconds: 200),
+            child: ActionChip(
+              onPressed: enabled ? () => onStepSelected(index) : null,
               backgroundColor: active
                   ? primaryColor.withOpacity(0.15)
                   : complete
                       ? Colors.green.withOpacity(0.1)
                       : null,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-                side: BorderSide(
-                  color: active ? primaryColor : Colors.grey.withOpacity(0.3),
-                  width: active ? 2 : 1,
-                ),
+              side: BorderSide(
+                color: active
+                    ? primaryColor
+                    : enabled
+                        ? Colors.grey.withOpacity(0.4)
+                        : Colors.grey.withOpacity(0.2),
+                width: active ? 2 : 1,
               ),
               avatar: Icon(
                 complete
@@ -293,13 +323,19 @@ class _BookingProgress extends StatelessWidget {
                         ? Icons.radio_button_checked
                         : Icons.radio_button_unchecked,
                 size: 18,
-                color: active ? primaryColor : (complete ? Colors.green : Colors.grey),
+                color: active
+                    ? primaryColor
+                    : complete
+                        ? Colors.green
+                        : enabled
+                            ? Colors.grey
+                            : Colors.grey.withOpacity(0.4),
               ),
               label: Text(
                 labels[index],
                 style: TextStyle(
                   fontWeight: active ? FontWeight.bold : FontWeight.normal,
-                  color: active ? primaryColor : null,
+                  color: enabled ? (active ? primaryColor : null) : Colors.grey,
                 ),
               ),
             ),

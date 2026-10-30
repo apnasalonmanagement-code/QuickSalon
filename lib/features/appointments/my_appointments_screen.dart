@@ -314,9 +314,9 @@ class _Body
               appointments[index];
 
           return _AppointmentCard(
-            appointment:
-                appointment,
-
+            appointment: appointment,
+            showShopInstruction: controller.filter == AppointmentFilter.upcoming ||
+                controller.filter == AppointmentFilter.pending,
             onTap: () async {
               await Navigator.of(
                 context,
@@ -371,12 +371,12 @@ class _AppointmentCard
   const _AppointmentCard({
     required this.appointment,
     required this.onTap,
+    required this.showShopInstruction,
   });
 
-  final AppointmentModel
-      appointment;
-
+  final AppointmentModel appointment;
   final VoidCallback onTap;
+  final bool showShopInstruction;
 
   @override
   Widget build(
@@ -481,6 +481,51 @@ class _AppointmentCard
                         .ellipsis,
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
+
+              if (showShopInstruction &&
+                  appointment.shopInstruction != null &&
+                  appointment.shopInstruction!.trim().isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(11),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withOpacity(0.07),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: theme.colorScheme.primary.withOpacity(0.2),
+                    ),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.info_outline_rounded,
+                        size: 18,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Message from shop',
+                              style: TextStyle(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(appointment.shopInstruction!.trim()),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
 
               const SizedBox(
                 height:

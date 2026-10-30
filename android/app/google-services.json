@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "913900397637",
+    "project_id": "user-8e38e",
+    "storage_bucket": "user-8e38e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:913900397637:android:5e104aafd01215a979ef2c",
+        "android_client_info": {
+          "package_name": "org.quick_salon.app2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATP0zOzNq8_vWVaPGUF8mu1_J2jjXClpw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

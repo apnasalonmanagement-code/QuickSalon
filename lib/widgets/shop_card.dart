@@ -60,7 +60,11 @@ class ShopCard extends StatelessWidget {
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          Icon(Icons.location_on_outlined, size: 15, color: Colors.grey[500]),
+                          Icon(
+                            Icons.location_on_outlined,
+                            size: 15,
+                            color: Colors.grey[500],
+                          ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
@@ -75,11 +79,32 @@ class ShopCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      if (showHours && (shop.openingTime != null || shop.closingTime != null)) ...[
+                      if (shop.distanceMeters != null) ...[
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            Icon(Icons.access_time_rounded, size: 15, color: Colors.grey[500]),
+                            const Icon(
+                              Icons.near_me_outlined,
+                              size: 15,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              _formatDistance(shop.distanceMeters!),
+                            ),
+                          ],
+                        ),
+                      ],
+                      if (showHours &&
+                          (shop.openingTime != null ||
+                              shop.closingTime != null)) ...[
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.access_time_rounded,
+                              size: 15,
+                              color: Colors.grey[500],
+                            ),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
@@ -94,7 +119,8 @@ class ShopCard extends StatelessWidget {
                           ],
                         ),
                       ],
-                      if (shop.description != null && shop.description!.trim().isNotEmpty) ...[
+                      if (shop.description != null &&
+                          shop.description!.trim().isNotEmpty) ...[
                         const SizedBox(height: 6),
                         Text(
                           shop.description!,
@@ -111,11 +137,18 @@ class ShopCard extends StatelessWidget {
                         runSpacing: 4,
                         children: [
                           _Badge(
-                            icon: shop.status ? Icons.check_circle_rounded : Icons.cancel_rounded,
-                            iconColor: shop.status ? Colors.green : Colors.red,
+                            icon: shop.status
+                                ? Icons.check_circle_rounded
+                                : Icons.cancel_rounded,
+                            iconColor:
+                                shop.status ? Colors.green : Colors.red,
                             label: shop.status ? 'Active' : 'Closed',
-                            backgroundColor: shop.status ? Colors.green.shade50 : Colors.red.shade50,
-                            textColor: shop.status ? Colors.green.shade700 : Colors.red.shade700,
+                            backgroundColor: shop.status
+                                ? Colors.green.shade50
+                                : Colors.red.shade50,
+                            textColor: shop.status
+                                ? Colors.green.shade700
+                                : Colors.red.shade700,
                           ),
                           if (shop.rating > 0)
                             _Badge(
@@ -132,7 +165,10 @@ class ShopCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 const Center(
-                  child: Icon(Icons.chevron_right_rounded, color: Colors.grey),
+                  child: Icon(
+                    Icons.chevron_right_rounded,
+                    color: Colors.grey,
+                  ),
                 ),
               ],
             ),
@@ -140,6 +176,14 @@ class ShopCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatDistance(double meters) {
+    if (meters < 1000) {
+      return '${meters.round()} m away';
+    }
+
+    return '${(meters / 1000).toStringAsFixed(1)} km away';
   }
 }
 
@@ -150,7 +194,9 @@ class _ShopImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = imageUrl != null && imageUrl!.trim().isNotEmpty;
+    final hasImage =
+        imageUrl != null && imageUrl!.trim().isNotEmpty;
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: SizedBox(
@@ -169,6 +215,7 @@ class _ShopImage extends StatelessWidget {
 
   Widget _placeholder(BuildContext context) {
     final theme = Theme.of(context);
+
     return Container(
       color: theme.colorScheme.primaryContainer.withOpacity(0.5),
       child: Icon(

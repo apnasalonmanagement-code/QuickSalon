@@ -95,6 +95,7 @@ class AppointmentRepository {
               total_price,
               booking_type,
               status,
+              shop_instruction,
               created_at,
               updated_at,
               expires_at

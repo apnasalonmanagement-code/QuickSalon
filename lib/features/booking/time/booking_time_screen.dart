@@ -37,6 +37,7 @@ class BookingTimeScreen extends StatelessWidget {
         staffId: staff.id,
         bookingDate: date,
         durationMinutes: booking.totalDurationMinutes,
+        initialSelectedTime: booking.selectedTime,
       ),
       child: _BookingTimeView(onTimeSelected: onTimeSelected),
     );

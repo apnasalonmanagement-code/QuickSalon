@@ -19,6 +19,7 @@ class AppointmentModel {
     this.shopImageUrl,
     this.staffName,
     this.staffImageUrl,
+    this.shopInstruction,
   });
 
   final String id;
@@ -47,6 +48,7 @@ class AppointmentModel {
   final String? shopImageUrl;
   final String? staffName;
   final String? staffImageUrl;
+  final String? shopInstruction;
 
   factory AppointmentModel.fromMap(
     Map<String, dynamic> map,
@@ -97,6 +99,9 @@ class AppointmentModel {
       ),
       staffImageUrl: _nullableString(
         map['_staff_image'],
+      ),
+      shopInstruction: _nullableString(
+        map['shop_instruction'],
       ),
     );
   }

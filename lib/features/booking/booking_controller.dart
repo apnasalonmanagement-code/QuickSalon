@@ -17,7 +17,10 @@ class BookingController extends ChangeNotifier {
     ShopModel? initialShop,
   })  : _serviceRepository = serviceRepository ?? ServiceRepository(),
         _staffRepository = staffRepository ?? StaffRepository(),
-        _selectedShop = initialShop;
+        _selectedShop = initialShop {
+    final now = DateTime.now();
+    _selectedDate = DateTime(now.year, now.month, now.day);
+  }
 
   final ServiceRepository _serviceRepository;
   final StaffRepository _staffRepository;

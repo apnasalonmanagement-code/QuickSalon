@@ -1,3 +1,4 @@
+
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -9,6 +10,7 @@ class BookingTimeController extends ChangeNotifier {
     required this.staffId,
     required this.bookingDate,
     required this.durationMinutes,
+    this.initialSelectedTime,
     AvailabilityRepository? repository,
     SupabaseClient? client,
   })  : _repository = repository ?? AvailabilityRepository(),
@@ -21,6 +23,7 @@ class BookingTimeController extends ChangeNotifier {
   final String staffId;
   final DateTime bookingDate;
   final int durationMinutes;
+  final String? initialSelectedTime;
   final AvailabilityRepository _repository;
   final SupabaseClient _client;
 
@@ -39,7 +42,6 @@ class BookingTimeController extends ChangeNotifier {
 
     isLoading = true;
     errorMessage = null;
-    selectedTime = null;
     notifyListeners();
 
     try {
@@ -53,12 +55,21 @@ class BookingTimeController extends ChangeNotifier {
         throw Exception('Service duration must be greater than zero.');
       }
 
-      times = await _repository.getCustomerStartTimes(
+      final availableTimes = await _repository.getCustomerStartTimes(
         shopId: shopId,
         staffId: staffId,
         date: bookingDate,
         durationMinutes: durationMinutes,
       );
+
+      times = _removePastAndTooSoonSlots(availableTimes);
+
+      final previousSelection = selectedTime ?? initialSelectedTime;
+
+      selectedTime =
+          previousSelection != null && times.contains(previousSelection)
+              ? previousSelection
+              : null;
     } catch (error) {
       times = <String>[];
       errorMessage = _cleanErrorMessage(error);
@@ -66,6 +77,60 @@ class BookingTimeController extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  // Removes past time slots and slots that are too soon to book.
+  List<String> _removePastAndTooSoonSlots(List<String> availableTimes) {
+    final now = DateTime.now();
+
+    final bookingDay = DateTime(
+      bookingDate.year,
+      bookingDate.month,
+      bookingDate.day,
+    );
+
+    final today = DateTime(now.year, now.month, now.day);
+
+    if (bookingDay.isBefore(today)) {
+      return <String>[];
+    }
+
+    // Keep all available slots on future dates.
+    if (bookingDay.isAfter(today)) {
+      return List<String>.from(availableTimes);
+    }
+
+    // For today's bookings, exclude times that have already passed.
+    return availableTimes.where((time) {
+      final normalized = _normalizeTime(time);
+      final parts = normalized.split(':');
+
+      if (parts.length < 2) {
+        return false;
+      }
+
+      final hour = int.tryParse(parts[0]);
+      final minute = int.tryParse(parts[1]);
+
+      if (hour == null ||
+          minute == null ||
+          hour < 0 ||
+          hour > 23 ||
+          minute < 0 ||
+          minute > 59) {
+        return false;
+      }
+
+      final slotTime = DateTime(
+        bookingDay.year,
+        bookingDay.month,
+        bookingDay.day,
+        hour,
+        minute,
+      );
+
+      return slotTime.isAfter(now);
+    }).toList();
   }
 
   void selectTime(String time) {

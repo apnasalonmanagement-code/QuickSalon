@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../core/services/push_notification_service.dart';
+
 import '../features/auth/forgot_password/forgot_password_screen.dart';
 import '../features/auth/login/login_screen.dart';
 import '../features/auth/register/register_screen.dart';
@@ -21,7 +23,8 @@ class ApnaSalonApp extends StatelessWidget {
       valueListenable: AppTheme.isSalonTheme,
       builder: (context, isSalon, child) {
         return MaterialApp(
-          title: 'ApnaSalon',
+            navigatorKey: quickSalonNavigatorKey,
+          title: 'QuickSalon',
           debugShowCheckedModeBanner: false,
           
           // Apply Salon (Blue) or Parlor (Pink) theme dynamically based on toggle

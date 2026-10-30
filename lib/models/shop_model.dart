@@ -14,6 +14,9 @@ class ShopModel {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
+  // Distance from current customer location.
+  final double? distanceMeters;
+
   const ShopModel({
     required this.id,
     required this.shopName,
@@ -29,10 +32,12 @@ class ShopModel {
     required this.status,
     this.createdAt,
     this.updatedAt,
+    this.distanceMeters,
   });
 
   factory ShopModel.fromMap(Map<String, dynamic> map) {
     final rawRating = map['rating'];
+
     return ShopModel(
       id: map['id'].toString(),
       shopName: (map['shop_name'] ?? '').toString(),
@@ -54,6 +59,11 @@ class ShopModel {
       updatedAt: map['updated_at'] != null
           ? DateTime.tryParse(map['updated_at'].toString())
           : null,
+      distanceMeters: map['distance_meters'] is num
+          ? (map['distance_meters'] as num).toDouble()
+          : double.tryParse(
+              map['distance_meters']?.toString() ?? '',
+            ),
     );
   }
 }

@@ -48,6 +48,11 @@ class UserBottomNavigation extends StatelessWidget {
             selectedIcon: Icon(Icons.person_rounded),
             label: 'Profile',
           ),
+          NavigationDestination(
+            icon: Icon(Icons.notifications_none_rounded),
+            selectedIcon: Icon(Icons.notifications_rounded),
+            label: 'Alerts',
+          ),
         ],
       ),
     );

@@ -87,6 +87,30 @@ class AuthRepository {
     await _client.auth.resetPasswordForEmail(email.trim());
   }
 
+  Future<void> verifyPasswordResetOtp({
+    required String email,
+    required String token,
+  }) async {
+    await _client.auth.verifyOTP(
+      email: email.trim(),
+      token: token.trim(),
+      type: OtpType.recovery,
+    );
+  }
+
+  Future<void> updatePassword(String password) async {
+    await _client.auth.updateUser(UserAttributes(password: password));
+    await _client.auth.signOut();
+  }
+
+  Future<void> deleteCurrentAccount() async {
+    final response = await _client.functions.invoke('delete-account');
+    if (response.status < 200 || response.status >= 300) {
+      throw Exception('Unable to delete account. Please try again or contact support.');
+    }
+    await _client.auth.signOut();
+  }
+
   Future<void> logout() async {
     await _client.auth.signOut();
   }
